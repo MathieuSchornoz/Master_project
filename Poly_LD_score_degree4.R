@@ -1,3 +1,10 @@
+
+######################################################
+
+# CREATION FOUR ORDER POLYNOMIAL REGRESSION LD SCORE 
+
+######################################################
+
 # Install package and library
 #install.packages("tydiverse", repos = 'https://stat.ethz.ch/CRAN/')
 #install.packages("dplyr", repos = 'https://stat.ethz.ch/CRAN/')
@@ -8,7 +15,7 @@ x = c("dplyr", "tibble", "stringr")
 lapply(x, require, character.only = TRUE)
 
 # Retrieve script input
-temp = list.files(pattern = "LDAK\\+Alpha")
+temp = list.files(pattern = "LDAK_weigh")
 Tag_list = lapply(temp, read.table, header = TRUE, sep = " ", stringsAsFactors = FALSE)
 
 # Rename each element of List
@@ -30,6 +37,7 @@ for (i in 1:length(Tag_list)) {
   names(Tag_list[[i]])
   colnames(Tag_list[[i]]) = c("Predictor", "A1", "A2", "Neighbours", "Tagging", 
                               "Weight", "MAF", "Categories", "Exp_Heritability", new_name)
+  #print(colnames(Tag_list[[i]]))
 }
 
 # Access Base of each SNP via all S value and change the column name according to the S value
@@ -47,10 +55,10 @@ for (i in 1:length(Tag_list)) {
 new_order = str_sort(colnames(LD_matrix), numeric = TRUE)
 LD_matrix = LD_matrix[,new_order]
 
-# Plot of randomly selected rows
+# small check
 sample_LD_matrix = c(504869,4278173,7013357,268264,2411145)
 test_LD = LD_matrix[sample_LD_matrix, ]
-
+test_LD
 jpeg("LD_score_sample_degree_4.jpg")
 matplot(t(test_LD), type = "b", pch = 1, col = 1:nrow(test_LD))
 legend("topright", legend = 1:nrow(test_LD), col = 1:nrow(test_LD), pch = 1)
@@ -75,8 +83,6 @@ for (i in 1:nrow(LD_matrix)) {
   matrix_poly_coef[i,] = poly_coef
 }
 
-head(matrix_poly_coef, n = 25)
-
 # Check size of matrix of coefficient
 cat("\n Number of rows of the matrix:", nrow(matrix_poly_coef), "\n")
 
@@ -88,3 +94,4 @@ for (i in 1:length(Tag_list)) {
   filename = str_replace(names(Tag_list[i]), ".tagging", "_LD_score_degree_4.tagging")
   write.table(Tag_list[[i]], file = filename, sep = " ", row.names = FALSE, col.names = TRUE, quote = FALSE)
 }
+
